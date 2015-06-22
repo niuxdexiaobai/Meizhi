@@ -4,11 +4,11 @@
     android:layout_height="match_parent"
     android:background="@color/md_black_1000">
 
-    <include layout="@layout/view_toolbar"/>
-
     <ImageView
         android:id="@+id/picture"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
+
+    <include layout="@layout/view_toolbar"/>
 
 </RelativeLayout>

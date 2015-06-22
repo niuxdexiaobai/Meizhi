@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import org.litepal.crud.DataSupport;
 
@@ -63,33 +64,6 @@ public class MainActivity extends SwipeRefreshBaseActivity {
         mRecyclerView.setLayoutManager(layoutManager);
         mMeizhiListAdapter = new MeizhiListAdapter(this, mMeizhiList);
         mRecyclerView.setAdapter(mMeizhiListAdapter);
-//        mRecyclerView.addOnScrollListener(
-//                new RecyclerView.OnScrollListener() {
-//                    boolean isIdle;
-//                    int mScrollY;
-//
-//                    @Override
-//                    public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-//                        super.onScrollStateChanged(recyclerView, newState);
-//                        isIdle = newState == RecyclerView.SCROLL_STATE_IDLE;
-//                        if (isIdle) {
-//                            mScrollY = 0;
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-//                        super.onScrolled(recyclerView, dx, dy);
-//                        mScrollY += dy;
-//                        // show or hide header view
-//                        if (mScrollY > 12) {
-//                            hideOrShowToolbar();
-//                        } else {
-//                            hideOrShowToolbar();
-//                        }
-//                    }
-//                }
-//        );
     }
 
     private void getData() {
@@ -116,6 +90,7 @@ public class MainActivity extends SwipeRefreshBaseActivity {
                             }
                             publishProgress(dateString);
                             meizhi.setMid(dateString);
+
                             String httpContent = httpUtils.download("http://gank.io/" + dateString);
                             int s0 = httpContent.indexOf("<img");
                             if (s0 == -1) {
@@ -132,6 +107,7 @@ public class MainActivity extends SwipeRefreshBaseActivity {
                             int s3 = httpContent.indexOf("width:", e1) + "width:".length();
                             int e3 = httpContent.indexOf("px", s3);
                             meizhi.setThumbWidth(Integer.valueOf(httpContent.substring(s3, e3)));
+
                             mMeizhiList.add(0, meizhi);
                             meizhi.save();
                         }
@@ -154,6 +130,17 @@ public class MainActivity extends SwipeRefreshBaseActivity {
                 }
         );
 
+    }
+
+    @Override
+    public void onToolbarClick() {
+        super.onToolbarClick();
+        mRecyclerView.smoothScrollToPosition(0);
+    }
+
+    public void onFab(View v) {
+        mRecyclerView.smoothScrollToPosition(0);
+        getData();
     }
 
     @Override
