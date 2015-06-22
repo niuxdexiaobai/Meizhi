@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">妹纸.gank.io</string>
+    <string name="title_activity_picture">PictureActivity</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+
+</resources>
