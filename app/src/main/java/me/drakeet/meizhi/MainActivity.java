@@ -124,6 +124,14 @@ public class MainActivity extends SwipeRefreshBaseActivity {
                             int s1 = httpContent.indexOf("src=\"", s0) + "src=\"".length();
                             int e1 = httpContent.indexOf("\"", s1);
                             meizhi.setUrl(httpContent.substring(s1, e1));
+
+                            int s2 = httpContent.indexOf("height:", e1) + "height:".length();
+                            int e2 = httpContent.indexOf("px", s2);
+                            meizhi.setThumbHeight(Integer.valueOf(httpContent.substring(s2, e2)));
+
+                            int s3 = httpContent.indexOf("width:", e1) + "width:".length();
+                            int e3 = httpContent.indexOf("px", s3);
+                            meizhi.setThumbWidth(Integer.valueOf(httpContent.substring(s3, e3)));
                             mMeizhiList.add(0, meizhi);
                             meizhi.save();
                         }

@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -39,11 +40,35 @@ public class MeizhiListAdapter extends RecyclerView.Adapter<MeizhiListAdapter.Vi
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder viewHolder, int position) {
+    public void onBindViewHolder(final ViewHolder viewHolder, final int position) {
         Meizhi meizhi = mList.get(position);
         viewHolder.meizhi = meizhi;
-        Picasso.with(mContext).load(meizhi.getUrl()).into(viewHolder.meizhiView);
         viewHolder.titleView.setText(meizhi.getMid());
+
+        ViewTreeObserver vto = viewHolder.meizhiView.getViewTreeObserver();
+        vto.addOnGlobalLayoutListener(
+                new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        int thumbWidth = viewHolder.meizhi.getThumbWidth();
+                        int thumbHeight = viewHolder.meizhi.getThumbHeight();
+                        if (thumbWidth > 0 && thumbHeight > 0) {
+                            int width = viewHolder.meizhiView.getMeasuredWidth();
+                            int height = Math.round(width * ((float) thumbHeight / thumbWidth));
+                            viewHolder.meizhiView.getLayoutParams().height = height;
+                            viewHolder.meizhiView.setMinimumHeight(height);
+                        }
+                        viewHolder.meizhiView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                    }
+                }
+        );
+
+        Picasso.with(mContext).load(meizhi.getUrl()).into(viewHolder.meizhiView);
+    }
+
+    @Override
+    public void onViewRecycled(ViewHolder holder) {
+        super.onViewRecycled(holder);
     }
 
     @Override
@@ -66,7 +91,8 @@ public class MeizhiListAdapter extends RecyclerView.Adapter<MeizhiListAdapter.Vi
 
         @Override
         public void onClick(View v) {
-            if (meizhi == null) return;
+            if (meizhi == null)
+                return;
 
             if (v == meizhiView) {
                 Intent i = new Intent(mContext, PictureActivity.class);
@@ -75,7 +101,8 @@ public class MeizhiListAdapter extends RecyclerView.Adapter<MeizhiListAdapter.Vi
 
                 if (mContext instanceof Activity) {
                     ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                            (Activity) mContext, meizhiView, PictureActivity.TRANSIT_PIC);
+                            (Activity) mContext, meizhiView, PictureActivity.TRANSIT_PIC
+                    );
                     ActivityCompat.startActivity((Activity) mContext, i, optionsCompat.toBundle());
                 } else {
                     mContext.startActivity(i);
