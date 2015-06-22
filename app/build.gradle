@@ -1,5 +1,9 @@
 apply plugin: 'com.android.application'
 
+def releaseTime() {
+    return new Date().format("yyyy-MM-dd", TimeZone.getTimeZone("UTC"))
+}
+
 android {
     compileSdkVersion 22
     buildToolsVersion "22.0.1"
@@ -11,10 +15,99 @@ android {
         versionCode 1
         versionName "1.0"
     }
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
+
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES.txt'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/dependencies.txt'
+        exclude 'META-INF/LGPL2.1'
+    }
+
+    lintOptions {
+        disable 'MissingTranslation', 'ExtraTranslation'
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+    signingConfigs {
+        app1 {
+            storeFile file("s.keystore")
+            storePassword STOREPASS
+            keyAlias KEYALIAS
+            keyPassword KEYPASS
+        }
+    }
+
     buildTypes {
         release {
+            // 不显示Log
+            buildConfigField "boolean", "LOG_DEBUG", "false"
+
+            debuggable false
             minifyEnabled false
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.app1
+
+            applicationVariants.all { variant ->
+                variant.outputs.each { output ->
+                    def outputFile = output.outputFile
+                    if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                        // 输出apk名称为boohee_v1.0_2015-01-15_wandoujia.apk
+                        def fileName = "Meizhi_v${defaultConfig.versionName}_${releaseTime()}_${variant.productFlavors[0].name}.apk"
+                        output.outputFile = new File(outputFile.parent, fileName)
+                    }
+                }
+            }
+        }
+
+        productFlavors {
+            Xiaomi {
+                manifestPlaceholders = [UMENG_CHANNEL_VALUE: "Xiaomi"]
+            }
+            _360 {
+                manifestPlaceholders = [UMENG_CHANNEL_VALUE: "360"]
+            }
+            Baidu {
+                manifestPlaceholders = [UMENG_CHANNEL_VALUE: "Baidu"]
+            }
+            Wandoujia {
+                manifestPlaceholders = [UMENG_CHANNEL_VALUE: "Wandoujia"]
+            }
+            fir {
+                manifestPlaceholders = [UMENG_CHANNEL_VALUE: "fir"]
+            }
+            Umeng {
+                manifestPlaceholders = [UMENG_CHANNEL_VALUE: "Umeng"]
+            }
+            GooglePlay {
+                manifestPlaceholders = [UMENG_CHANNEL_VALUE: "GooglePlay"]
+            }
+            Meizu {
+                manifestPlaceholders = [UMENG_CHANNEL_VALUE: "Meizu"]
+            }
+            Huawei {
+                manifestPlaceholders = [UMENG_CHANNEL_VALUE: "Huawei"]
+            }
+            QQ {
+                manifestPlaceholders = [UMENG_CHANNEL_VALUE: "QQ"]
+            }
+            PP {
+                manifestPlaceholders = [UMENG_CHANNEL_VALUE: "PP"]
+            }
         }
     }
 }

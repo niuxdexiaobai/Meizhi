@@ -75,7 +75,6 @@ public class MainActivity extends SwipeRefreshBaseActivity {
                             if (!mIsFirstTimeTouchBottom) {
                                 mSwipeRefreshLayout.setRefreshing(true);
                                 mOffset += 20;
-                                ToastUtils.showShort(getString(R.string.loading));
                                 getData();
                             } else {
                                 mIsFirstTimeTouchBottom = false;
