@@ -143,6 +143,7 @@ public class MainActivity extends SwipeRefreshBaseActivity {
                         if (addFromDb) {
                             List<Meizhi> meizhiList = DataSupport.offset(mOffset)
                                                                  .limit(20)
+                                                                 .order("id desc")
                                                                  .find(Meizhi.class);
                             for (Meizhi meizhi : meizhiList) {
                                 if (!meizhi.getUrl().equals(getString(R.string.no_data_the_day))) {
