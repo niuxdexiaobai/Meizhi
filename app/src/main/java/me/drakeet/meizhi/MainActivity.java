@@ -75,7 +75,7 @@ public class MainActivity extends SwipeRefreshBaseActivity {
                             if (!mIsFirstTimeTouchBottom) {
                                 mSwipeRefreshLayout.setRefreshing(true);
                                 mOffset += 20;
-                                ToastUtils.showShort("bottom");
+                                ToastUtils.showShort(getString(R.string.loading));
                                 getData();
                             } else {
                                 mIsFirstTimeTouchBottom = false;
@@ -108,17 +108,17 @@ public class MainActivity extends SwipeRefreshBaseActivity {
                             List<Meizhi> qList = DataSupport.where("mid = ?", dateString)
                                                             .find(Meizhi.class);
                             if (qList.size() > 0) {
-                                meizhi.setUrl("今天没有妹纸");
+                                meizhi.setUrl(getString(R.string.no_data_the_day));
                                 meizhi.save();
                                 continue;
                             }
                             publishProgress(dateString);
                             meizhi.setMid(dateString);
 
-                            String httpContent = httpUtils.download("http://gank.io/" + dateString);
+                            String httpContent = httpUtils.download(getString(R.string.api) + dateString);
                             int s0 = httpContent.indexOf("<img");
                             if (s0 == -1) {
-                                meizhi.setUrl("今天没有妹纸");
+                                meizhi.setUrl(getString(R.string.no_data_the_day));
                                 meizhi.save();
                                 continue;
                             }
@@ -145,7 +145,7 @@ public class MainActivity extends SwipeRefreshBaseActivity {
                                                                  .limit(20)
                                                                  .find(Meizhi.class);
                             for (Meizhi meizhi : meizhiList) {
-                                if (!meizhi.getUrl().equals("今天没有妹纸")) {
+                                if (!meizhi.getUrl().equals(getString(R.string.no_data_the_day))) {
                                     mMeizhiList.add(meizhi);
                                 }
                             }
@@ -156,7 +156,7 @@ public class MainActivity extends SwipeRefreshBaseActivity {
                     @Override
                     protected void onProgressUpdate(Object... values) {
                         super.onProgressUpdate(values);
-                        ToastUtils.showShort("正在加载：" + values[0]);
+                        ToastUtils.showShort(getString(R.string.loading_num_of) + values[0]);
                     }
 
                     @Override
