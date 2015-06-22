@@ -4,29 +4,40 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <me.drakeet.meizhi.widget.MultiSwipeRefreshLayout
-        android:id="@+id/swipe_refresh_layout"
+    <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rv_meizhi"
+        <include layout="@layout/view_toolbar"/>
+
+        <me.drakeet.meizhi.widget.MultiSwipeRefreshLayout
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            android:id="@+id/swipe_refresh_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent">
 
-    </me.drakeet.meizhi.widget.MultiSwipeRefreshLayout>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_meizhi"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/main_fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@mipmap/ic_refresh_white_24dp"
-        android:layout_gravity="right|bottom"
-        android:layout_marginBottom="24dp"
-        android:layout_marginRight="16dp"
-        android:clickable="true"
-        app:layout_anchorGravity="right|bottom"
-        app:borderWidth="0dp"
-        app:elevation="4dp"/>
+        </me.drakeet.meizhi.widget.MultiSwipeRefreshLayout>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/main_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|bottom"
+            android:layout_marginBottom="24dp"
+            android:layout_marginRight="16dp"
+            android:clickable="true"
+            android:src="@mipmap/ic_refresh_white_24dp"
+            app:layout_anchor="@id/swipe_refresh_layout"
+            app:borderWidth="0dp"
+            app:elevation="4dp"
+            app:layout_anchorGravity="right|bottom"
+            app:layout_behavior="me.drakeet.meizhi.widget.FABAutoHideBehavior"/>
+
+    </android.support.design.widget.CoordinatorLayout>
 
 </FrameLayout>

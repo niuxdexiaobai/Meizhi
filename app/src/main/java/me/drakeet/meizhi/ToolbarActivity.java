@@ -9,8 +9,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.animation.DecelerateInterpolator;
 
-public abstract class ToolbarActivity extends AppCompatActivity
-{
+public abstract class ToolbarActivity extends AppCompatActivity {
+
 	abstract protected int getLayoutResource();
 	
 	protected AppBarLayout mAppBar;

@@ -29,9 +29,13 @@ public class MainActivity extends SwipeRefreshBaseActivity {
     List<Meizhi> mMeizhiList;
 
     @Override
+    protected int getLayoutResource() {
+        return R.layout.activity_main;
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
         mHandler = new Handler();
         mMeizhiList = new ArrayList<>();
         mMeizhiList.addAll(OldMeizhi.init());
@@ -53,10 +57,39 @@ public class MainActivity extends SwipeRefreshBaseActivity {
 
     private void setUpRecyclerView() {
         mRecyclerView = (RecyclerView) findViewById(R.id.rv_meizhi);
-        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
+        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(
+                2, StaggeredGridLayoutManager.VERTICAL
+        );
         mRecyclerView.setLayoutManager(layoutManager);
         mMeizhiListAdapter = new MeizhiListAdapter(this, mMeizhiList);
         mRecyclerView.setAdapter(mMeizhiListAdapter);
+//        mRecyclerView.addOnScrollListener(
+//                new RecyclerView.OnScrollListener() {
+//                    boolean isIdle;
+//                    int mScrollY;
+//
+//                    @Override
+//                    public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+//                        super.onScrollStateChanged(recyclerView, newState);
+//                        isIdle = newState == RecyclerView.SCROLL_STATE_IDLE;
+//                        if (isIdle) {
+//                            mScrollY = 0;
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+//                        super.onScrolled(recyclerView, dx, dy);
+//                        mScrollY += dy;
+//                        // show or hide header view
+//                        if (mScrollY > 12) {
+//                            hideOrShowToolbar();
+//                        } else {
+//                            hideOrShowToolbar();
+//                        }
+//                    }
+//                }
+//        );
     }
 
     private void getData() {
@@ -75,7 +108,8 @@ public class MainActivity extends SwipeRefreshBaseActivity {
                             Meizhi meizhi = new Meizhi();
                             String dateString = DateUtils.toDate(date);
                             date = DateUtils.getLastdayDate(date);
-                            List<Meizhi> qList = DataSupport.where("mid = ?", dateString).find(Meizhi.class);
+                            List<Meizhi> qList = DataSupport.where("mid = ?", dateString)
+                                                            .find(Meizhi.class);
                             if (qList.size() > 0) {
                                 mMeizhiList.add(0, qList.get(0));
                                 continue;
