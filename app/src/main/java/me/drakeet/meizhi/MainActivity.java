@@ -28,6 +28,8 @@ public class MainActivity extends SwipeRefreshBaseActivity {
     Handler mHandler;
     MeizhiListAdapter mMeizhiListAdapter;
     List<Meizhi> mMeizhiList;
+    boolean mIsDbInited, mIsFirstTimeTouchBottom = true;
+    int mOffset = 0;
 
     @Override
     protected int getLayoutResource() {
@@ -39,7 +41,6 @@ public class MainActivity extends SwipeRefreshBaseActivity {
         super.onCreate(savedInstanceState);
         mHandler = new Handler();
         mMeizhiList = new ArrayList<>();
-        mMeizhiList.addAll(OldMeizhi.init());
         setUpRecyclerView();
     }
 
@@ -58,20 +59,42 @@ public class MainActivity extends SwipeRefreshBaseActivity {
 
     private void setUpRecyclerView() {
         mRecyclerView = (RecyclerView) findViewById(R.id.rv_meizhi);
-        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(
+        final StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(
                 2, StaggeredGridLayoutManager.VERTICAL
         );
         mRecyclerView.setLayoutManager(layoutManager);
         mMeizhiListAdapter = new MeizhiListAdapter(this, mMeizhiList);
         mRecyclerView.setAdapter(mMeizhiListAdapter);
+        mRecyclerView.addOnScrollListener(
+                new RecyclerView.OnScrollListener() {
+                    @Override
+                    public void onScrolled(RecyclerView rv, int dx, int dy) {
+                        if (!mSwipeRefreshLayout.isRefreshing() && layoutManager.findLastCompletelyVisibleItemPositions(
+                                new int[2]
+                        )[1] >= mMeizhiListAdapter.getItemCount() - 2) {
+                            if (!mIsFirstTimeTouchBottom) {
+                                mSwipeRefreshLayout.setRefreshing(true);
+                                mOffset += 20;
+                                ToastUtils.showShort("bottom");
+                                getData();
+                            } else {
+                                mIsFirstTimeTouchBottom = false;
+                            }
+                        }
+                    }
+                }
+        );
     }
 
-    private void getData() {
+    private void getData(final boolean addFromDb) {
         setRefreshing(true);
         TaskUtils.executeAsyncTask(
                 new AsyncTask<Object, Object, Boolean>() {
                     @Override
                     protected Boolean doInBackground(Object... params) {
+                        if (!mIsDbInited) {
+                            mIsDbInited = OldMeizhi.init();
+                        }
                         HttpUtils httpUtils = new HttpUtils();
                         Calendar calendar = Calendar.getInstance();
                         Date date = new Date();
@@ -85,7 +108,8 @@ public class MainActivity extends SwipeRefreshBaseActivity {
                             List<Meizhi> qList = DataSupport.where("mid = ?", dateString)
                                                             .find(Meizhi.class);
                             if (qList.size() > 0) {
-                                mMeizhiList.add(0, qList.get(0));
+                                meizhi.setUrl("今天没有妹纸");
+                                meizhi.save();
                                 continue;
                             }
                             publishProgress(dateString);
@@ -94,6 +118,8 @@ public class MainActivity extends SwipeRefreshBaseActivity {
                             String httpContent = httpUtils.download("http://gank.io/" + dateString);
                             int s0 = httpContent.indexOf("<img");
                             if (s0 == -1) {
+                                meizhi.setUrl("今天没有妹纸");
+                                meizhi.save();
                                 continue;
                             }
                             int s1 = httpContent.indexOf("src=\"", s0) + "src=\"".length();
@@ -108,8 +134,21 @@ public class MainActivity extends SwipeRefreshBaseActivity {
                             int e3 = httpContent.indexOf("px", s3);
                             meizhi.setThumbWidth(Integer.valueOf(httpContent.substring(s3, e3)));
 
-                            mMeizhiList.add(0, meizhi);
                             meizhi.save();
+                            if (!addFromDb) {
+                                mMeizhiList.add(meizhi);
+                            }
+                        }
+
+                        if (addFromDb) {
+                            List<Meizhi> meizhiList = DataSupport.offset(mOffset)
+                                                                 .limit(20)
+                                                                 .find(Meizhi.class);
+                            for (Meizhi meizhi : meizhiList) {
+                                if (!meizhi.getUrl().equals("今天没有妹纸")) {
+                                    mMeizhiList.add(meizhi);
+                                }
+                            }
                         }
                         return mMeizhiList.size() > oLength;
                     }
@@ -132,21 +171,25 @@ public class MainActivity extends SwipeRefreshBaseActivity {
 
     }
 
+    private void getData() {
+        getData(true);
+    }
+
     @Override
     public void onToolbarClick() {
-        super.onToolbarClick();
+                super.onToolbarClick();
         mRecyclerView.smoothScrollToPosition(0);
     }
 
     public void onFab(View v) {
         mRecyclerView.smoothScrollToPosition(0);
-        getData();
+        requestDataRefresh();
     }
 
     @Override
     public void requestDataRefresh() {
         super.requestDataRefresh();
-        getData();
+        getData(/* add from db */ false);
     }
 
     @Override
