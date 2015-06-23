@@ -21,4 +21,11 @@ public class DateUtils {
         calendar.add(Calendar.DATE, -1);
         return calendar.getTime();
     }
+
+    public static Date getNextdayDate(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.DATE, 1);
+        return calendar.getTime();
+    }
 }

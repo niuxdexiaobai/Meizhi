@@ -96,20 +96,22 @@ public class MainActivity extends SwipeRefreshBaseActivity {
                         }
                         HttpUtils httpUtils = new HttpUtils();
                         Calendar calendar = Calendar.getInstance();
-                        Date date = new Date();
+                        Date today = new Date();
                         calendar.set(2015, 5, 21);
+                        Date thatDay = calendar.getTime();
 
                         int oLength = mMeizhiList.size();
-                        while (date.after(calendar.getTime())) {
-                            Meizhi meizhi = new Meizhi();
-                            String dateString = DateUtils.toDate(date);
-                            date = DateUtils.getLastdayDate(date);
-                            List<Meizhi> qList = DataSupport.where("mid = ?", dateString)
-                                                            .find(Meizhi.class);
+                        while (thatDay.compareTo(today) <= 0) {
+                            String dateString = DateUtils.toDate(thatDay);
+                            thatDay = DateUtils.getNextdayDate(thatDay);
+
+                            List<Meizhi> qList = DataSupport.where("mid = ?", dateString).find(Meizhi.class);
                             if (qList.size() > 0) {
                                 continue;
                             }
                             publishProgress(dateString);
+
+                            Meizhi meizhi = new Meizhi();
                             meizhi.setMid(dateString);
 
                             String httpContent = httpUtils.download(getString(R.string.api) + dateString);
