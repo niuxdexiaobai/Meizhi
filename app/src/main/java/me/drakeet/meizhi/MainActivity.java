@@ -103,7 +103,7 @@ public class MainActivity extends SwipeRefreshBaseActivity {
                         int oLength = mMeizhiList.size();
                         while (thatDay.compareTo(today) <= 0) {
                             String dateString = DateUtils.toDate(thatDay);
-
+                            thatDay = DateUtils.getNextdayDate(thatDay);
                             List<Meizhi> qList = DataSupport.where("mid = ?", dateString).find(Meizhi.class);
                             if (qList.size() > 0) {
                                 continue;
@@ -117,11 +117,10 @@ public class MainActivity extends SwipeRefreshBaseActivity {
                             int s0 = httpContent.indexOf("<img");
                             if (s0 == -1) {
                                 meizhi.setUrl(getString(R.string.no_data_the_day));
-                                if (!DateUtils.toDate(thatDay).equals(DateUtils.toDate(today)))
+                                if (!DateUtils.toDate(DateUtils.getLastdayDate(thatDay)).equals(DateUtils.toDate(today)))
                                     meizhi.save();
                                 continue;
                             }
-                            thatDay = DateUtils.getNextdayDate(thatDay);
 
                             int s1 = httpContent.indexOf("src=\"", s0) + "src=\"".length();
                             int e1 = httpContent.indexOf("\"", s1);
