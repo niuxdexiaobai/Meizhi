@@ -107,8 +107,6 @@ public class MainActivity extends SwipeRefreshBaseActivity {
                             List<Meizhi> qList = DataSupport.where("mid = ?", dateString)
                                                             .find(Meizhi.class);
                             if (qList.size() > 0) {
-                                meizhi.setUrl(getString(R.string.no_data_the_day));
-                                meizhi.save();
                                 continue;
                             }
                             publishProgress(dateString);
