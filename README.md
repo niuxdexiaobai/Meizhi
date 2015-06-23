@@ -12,12 +12,12 @@
 * 使用 ORM 快速操作数据库
 * 访问网络，简单解析 HTML
 * RecyclerView 瀑布流的使用
-* RecycleView 底部加载更多的简单实现
+* RecyclerView 底部加载更多的简单实现
 * Material Design 的下拉刷新
 * 使用最新的 Design 兼容库
 * 使用 5.0 的 Share 组件或元素动画
 * 使用 Toolbar 完全替代 ActionBar
 
-<img src="/screenshots/s1.png" alt="screenshot" title="screenshot" width="270" height="486" />  <img src="/screenshots/s2.png" alt="screenshot" title="screenshot" width="270" height="486" />
+<img src="/screenshots/s1.png" alt="screenshot" title="screenshot" width="270" height="486" />  <img src="/screenshots/s4.png" alt="screenshot" title="screenshot" width="270" height="486" />
 
-<img src="/screenshots/s3.png" alt="screenshot" title="screenshot" width="270" height="486" />  <img src="/screenshots/s4.png" alt="screenshot" title="screenshot" width="270" height="486" />
+<img src="/screenshots/s3.png" alt="screenshot" title="screenshot" width="270" height="486" />  <img src="/screenshots/s2.png" alt="screenshot" title="screenshot" width="270" height="486" />
