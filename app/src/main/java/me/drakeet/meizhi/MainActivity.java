@@ -118,7 +118,7 @@ public class MainActivity extends SwipeRefreshBaseActivity {
                             int s0 = httpContent.indexOf("<img");
                             if (s0 == -1) {
                                 meizhi.setUrl(getString(R.string.no_data_the_day));
-                                if (thatDay.compareTo(today) != 0)
+                                if (!DateUtils.toDate(thatDay).equals(DateUtils.toDate(today)))
                                     meizhi.save();
                                 continue;
                             }
